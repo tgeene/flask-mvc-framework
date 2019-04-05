@@ -1,15 +1,17 @@
 # load flask sub-systems
-from flask import render_template, request
+from flask import render_template
 
 # load application vars
 from application import system
+from application.config.site import site_defaults
 
 # load page
 @system.route('/')
 def home():
-    config = {
-        'site_title': 'Flask MVC Framework',
-        'page_title': 'Home Controller',
-        'meta_description': 'Hello, World! Welcome to the Flask MVC Framework.'
+    data = site_defaults
+    data['page'] = {
+        'title': 'Home Controller'
     }
-    return render_template('home.html', data=config)
+    data['meta_description'] = 'Hello, World! Welcome to the Flask MVC Framework.'
+
+    return render_template('home.html', data=data)
