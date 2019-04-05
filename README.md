@@ -7,7 +7,7 @@ Starting point of Python Web Application using the Flask Microframework.
 * MVC Structure
   * Home Page Default
   * Starter Template System
-* Expandablity for:
+* Expandability for:
   * Helpers
   * Hooks
   * Libraries
@@ -15,7 +15,7 @@ Starting point of Python Web Application using the Flask Microframework.
 ## System Requirements
 
 * Python: 3.7+
-  * Pip required
+* Flask: 1.0+
 
 ### Install
 
