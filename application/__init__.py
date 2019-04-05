@@ -3,9 +3,8 @@ from flask import Flask
 
 system = Flask('application')
 system.config['SECRET_KEY'] = b'!T3DxK;L1jJGYf$'
-system.config['ENV'] = 'development'
 system.config['TESTING'] = True
-system.config['DEBUG'] = True
+system.config['TEMPLATES_AUTO_RELOAD'] = True
 
 # load hooks
 from application.hooks import *
