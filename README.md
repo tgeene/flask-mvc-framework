@@ -20,9 +20,15 @@ Starting point of Python Web Application using the Flask Microframework.
 ### Install
 
 	git clone git@github.com:tgeene/flask-mvc-framework.git
-	cd py-flask-mvc
+	cd flask-mvc-framework
 	pip install -r requirements.txt
 	
 ### Run Server
 
-	flask run
+Windows
+
+    flask run
+
+Linux
+
+	FLASK_APP=app.py flask run
