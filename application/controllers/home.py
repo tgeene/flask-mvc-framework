@@ -3,7 +3,7 @@ from flask import render_template
 
 # load application vars
 from application import system
-from application.config.site import site_defaults
+from application.config.site import *
 
 # load page
 @system.route('/')

@@ -1,5 +1,9 @@
 {% extends "_layout.html" -%}
 {% block content -%}
-	<h1>Hello, World!</h1>
+	<h1>{{ data.page.title }}</h1>
 	<p>Welcome to the Flask MVC Framework.</p>
+	<h2>Examples</h2>
+	<ul>
+		<li><a href="{{ url_for('model_with_db') }}" title="Model with DB Connection">Model with DB Connection</a></li>
+	</ul>
 {%- endblock content %}
