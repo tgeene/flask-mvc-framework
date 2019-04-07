@@ -6,7 +6,7 @@ class ExampleModel:
         pass
 
     def get_users(self):
-        records = db.get('users', {}, True)
+        records = db.get('users')
 
         return records
 

@@ -8,4 +8,5 @@ from application.config.database import *
 database = import_module('application.libraries.db_drivers.' + db_config['driver'], )
 
 # load database
-db = database.Driver(db_config)
+db_config.pop('driver', None)
+db = database.Driver(**db_config)
