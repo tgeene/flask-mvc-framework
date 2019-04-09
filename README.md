@@ -1,6 +1,6 @@
 # Flask MVC
 
-Starting point of Python Web Application using the Flask Microframework.
+A free, open-source MVC starting point of Python Web Application using the Flask Microframework.
 
 ## Features
 
@@ -17,18 +17,6 @@ Starting point of Python Web Application using the Flask Microframework.
 * Python: 3.7+
 * Flask: 1.0+
 
-### Install
+***
 
-	git clone git@github.com:tgeene/flask-mvc-framework.git
-	cd flask-mvc-framework
-	pip install -r requirements.txt
-	
-### Run Server
-
-Windows
-
-    flask run
-
-Linux
-
-	FLASK_APP=app.py flask run
+[FMF Wiki](https://github.com/tgeene/flask-mvc-framework/wiki)
