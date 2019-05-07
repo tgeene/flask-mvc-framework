@@ -1,8 +1,5 @@
 # load flask sub-systems
-from flask_pymongo import PyMongo
-
-# load application vars
-from application import system
+from pymongo import MongoClient
 
 # load ObjectID system
 from bson import ObjectId
@@ -11,7 +8,7 @@ class Driver:
     _where = {}
     _data = {}
 
-    def __init__(self, host, port, database, authorize = False, username = '', password = ''):
+    def __init__(self, host, port, database, authorize=False, username='', password=''):
         self._host = host
         self._port = port
         self._authorize = authorize
@@ -34,9 +31,7 @@ class Driver:
             print("Error: Could not generate connection url from config.")
 
     def __connect_to_client(self):
-        system.config["MONGO_URI"] = self.__client_url
-
-        self.__client = PyMongo(system)
+        self.__client = MongoClient(self.__client_url)
 
         self.db = self.__client.db
 
@@ -87,7 +82,7 @@ class Driver:
 
     # -----
 
-    def get_one(self, collection_name = '', where_obj = {}):
+    def get_one(self, collection_name='', where_obj={}):
         if collection_name:
             self.collection = collection_name
 
@@ -96,7 +91,7 @@ class Driver:
 
         return self.collection.find_one(self.where)
 
-    def get(self, collection_name = '', where_obj = {}):
+    def get(self, collection_name='', where_obj={}):
         if collection_name:
             self.collection = collection_name
 
@@ -105,7 +100,7 @@ class Driver:
 
         return self.collection.find(self.where)
 
-    def get_count(self, collection_name = '', where_obj = {}):
+    def get_count(self, collection_name='', where_obj={}):
         if collection_name:
             self.collection = collection_name
 
@@ -116,14 +111,15 @@ class Driver:
 
     # -----
 
-    def aggregate(self, collection_name, pipeline, options = {}):
-        col = self.mongo.db[collection]
+    def aggregate(self, collection_name, pipeline, options={}):
+        if collection_name:
+            self.collection = collection_name
 
-        return col.aggregate(pipeline, options)
+        return self.collection.aggregate(pipeline, options)
 
     # -----
 
-    def insert_one(self, collection_name = '', data_obj = {}):
+    def insert_one(self, collection_name='', data_obj={}):
         if collection_name:
             self.collection = collection_name
 
@@ -132,7 +128,7 @@ class Driver:
 
         return self.collection.insert_one(self.data).inserted_id
 
-    def insert_many(self, collection_name = '', data_obj = {}):
+    def insert_many(self, collection_name='', data_obj={}):
         if collection_name:
             self.collection = collection_name
 
@@ -143,7 +139,7 @@ class Driver:
 
     # -----
 
-    def update(self, collection_name = '', where_obj = {}, data_obj = {}):
+    def update(self, collection_name='', where_obj={}, data_obj={}):
         if collection_name:
             self.collection = collection_name
 
@@ -157,7 +153,7 @@ class Driver:
 
     # -----
 
-    def delete_one(self, collection_name = '', where_obj = {}):
+    def delete_one(self, collection_name='', where_obj={}):
         if collection_name:
             self.collection = collection_name
 
@@ -166,7 +162,7 @@ class Driver:
 
         return self.collection.delete_one(self.where)
 
-    def delete_many(self, collection_name = '', where_obj = {}):
+    def delete_many(self, collection_name='', where_obj={}):
         if collection_name:
             self.collection = collection_name
 

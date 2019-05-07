@@ -3,6 +3,6 @@
 	<h1>{{ data.page.title }}</h1>
 	<h2>Users in Database</h2>
 	{% for user in data.users %}
-		<p>{{ user._id }}: {{ user.email }}</p>
+		<p>{{ user.id }}: {{ user.email }}</p>
 	{% endfor %}
 {%- endblock content %}
