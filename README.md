@@ -11,7 +11,6 @@ A free, open-source MVC starting point of Python Web Application using the Flask
     * MongoDB (Requires `pymongo`)
     * MySQL (Requires `pymysql`)
 * Expandability for:
-  * Helpers
   * Hooks
   * Libraries
 
