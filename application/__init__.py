@@ -1,10 +1,11 @@
 # load Flask
 from flask import Flask
-
 system = Flask('application')
-system.config['SECRET_KEY'] = b'!T3DxK;L1jJGYf$'
-system.config['TESTING'] = True
-system.config['TEMPLATES_AUTO_RELOAD'] = True
+
+# load system config
+from application.config.flask import *
+for key in flask_config:
+    system.config[key] = flask_config[key]
 
 # load hooks
 from application.hooks import *
