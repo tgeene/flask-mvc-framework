@@ -4,8 +4,8 @@ system = Flask('application')
 
 # load system config
 from application.config.flask import *
-for key in flask_config:
-    system.config[key] = flask_config[key]
+for key in config:
+    system.config[key] = config[key]
 
 # load hooks
 from application.hooks import *

@@ -9,7 +9,7 @@ from application.models.example import example_model
 # load page
 @system.route('/model-with-db-connection')
 def model_with_db():
-    data = site_defaults
+    data = defaults
     data['page'] = {
         'title': 'Model with DB Connection'
     }

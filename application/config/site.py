@@ -1,4 +1,4 @@
-site_defaults = {
+defaults = {
         'site': {
                 'title': 'Flask MVC Framework'
         },

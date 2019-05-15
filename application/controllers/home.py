@@ -8,7 +8,7 @@ from application.config.site import *
 # load page
 @system.route('/')
 def home():
-    data = site_defaults
+    data = defaults
     data['page'] = {
         'title': 'Home Controller'
     }
