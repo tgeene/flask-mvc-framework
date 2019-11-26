@@ -48,22 +48,21 @@ class Driver:
 
     def __where_builder(self, this_obj, this_join='AND'):
         where_statement = ''
-        for key, val in this_obj:
+        for key, val in this_obj.items():
             if where_statement:
                 where_statement += f" {this_join} "
 
             val_type = type(val)
-            if 'dict' in val_type:
+            if val_type is dict:
                 where_statement += f"({self.__where_builder(val, key)})"
-            elif 'list' in val_type:
+            elif val_type is list:
                 where_statement += f"{key} IN({val})"
-            elif any(v_type in type(var) for v_type in ['bool', 'int', 'float']):
+            elif val_type in (bool, int, float):
                 where_statement += f"{key} = {val}"
-                where_statement = where_statement + key + " = " + val
-            elif 'string' in val_type:
-                where_statement += f"{key} = '{val}'"
+            elif val_type is str:
+                where_statement += f"{key} = '{self.db.escape_string(val)}'"
 
-        return where_statement if where_statement else 1
+        return where_statement if where_statement else '1'
 
     # -----
 
@@ -126,7 +125,7 @@ class Driver:
         if data_obj:
             self.data = data_obj
 
-        __set_insert_vars(self.data)
+        self.__set_insert_vars(self.data)
         query = f"INSERT INTO {self.table} ({self.__col_columns}) VALUES ({self.__col_values})"
 
         with self.db.cursor() as cursor:
@@ -141,12 +140,12 @@ class Driver:
         if data_obj:
             self.data = data_obj
 
-        __set_insert_vars(self.data[0])
+        self.__set_insert_vars(self.data[0])
         query = f"INSERT INTO {self.table} ({self.__col_columns}) VALUES ({self.__col_values})"
 
         next(self.data)
         for row in self.data:
-            __set_insert_vars(row)
+            self.__set_insert_vars(row)
             query += f", ({self.__col_values})"
 
         with self.db.cursor() as cursor:
@@ -157,16 +156,16 @@ class Driver:
     def __set_insert_vars(self, this_data):
         col_columns = ''
         col_values = ''
-        for key, val in this_data:
+        for key, val in this_data.items():
             if col_columns or col_values:
                 col_columns += ", "
                 col_values += ", "
 
             col_columns += key
 
-            if 'string' in type(val):
-                col_values += f"'{val}'"
-            elif any(v_type in type(var) for v_type in ['bool', 'int', 'float']):
+            if type(val) is str:
+                col_values += f"'{self.db.escape_string(val)}'"
+            elif type(val) in (bool, int, float):
                 col_values += f"{val}"
 
         self.__col_columns = col_columns
@@ -185,13 +184,13 @@ class Driver:
             self.data = data_obj
 
         set_columns = ''
-        for key, val in self.data:
+        for key, val in self.data.items():
             if set_columns:
                 set_columns += ", "
 
-            if 'string' in type(val):
-                set_columns += f"'{key} = {val}'"
-            elif any(v_type in type(var) for v_type in ['bool', 'int', 'float']):
+            if type(val) is str:
+                set_columns += f"{key} = '{self.db.escape_string(val)}'"
+            elif type(val) in (bool, int, float):
                 set_columns += f"{key} = {val}"
 
         query = f"UPDATE {self.table} SET {set_columns} WHERE {self.where}"
