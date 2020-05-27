@@ -22,8 +22,8 @@ class Driver:
     @property
     def __client_url(self):
         try:
-            url = self._host + ":" + self._port  + '/' + self.__database
-            if self._authorize:
+            url = self._host + ":" + str(self._port) + '/' + self._authorize
+            if self._username and self._password:
                 url = self._username + ":" + self._password + "@" + url
 
             return "mongodb://" + url
@@ -33,7 +33,7 @@ class Driver:
     def __connect_to_client(self):
         self.__client = MongoClient(self.__client_url)
 
-        self.db = self.__client.db
+        self.db = self.__client[self.database]
 
     # -----
 
@@ -107,7 +107,7 @@ class Driver:
         if where_obj:
             self.where = where_obj
 
-        return self.collection.count_documents(where)
+        return self.collection.count_documents(self.where)
 
     # -----
 
