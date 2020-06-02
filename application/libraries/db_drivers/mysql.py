@@ -2,9 +2,6 @@
 import pymysql.cursors
 
 class Driver:
-    _where = {}
-    _data = {}
-
     def __init__(self, host, port, database, authorize=False, username='', password=''):
         self._host = host
         self._port = port
@@ -18,7 +15,7 @@ class Driver:
     # -----
 
     def __connect_to_client(self):
-        self.db = pymysql.connect(host=self._host,
+        self._db = pymysql.connect(host=self._host,
                                   port=self._port,
                                   user=self._username,
                                   password=self._password,
@@ -48,21 +45,22 @@ class Driver:
 
     def __where_builder(self, this_obj, this_join='AND'):
         where_statement = ''
-        for key, val in this_obj.items():
+        for key, val in this_obj:
             if where_statement:
                 where_statement += f" {this_join} "
 
             val_type = type(val)
-            if val_type is dict:
+            if 'dict' in val_type:
                 where_statement += f"({self.__where_builder(val, key)})"
-            elif val_type is list:
+            elif 'list' in val_type:
                 where_statement += f"{key} IN({val})"
-            elif val_type in (bool, int, float):
+            elif any(v_type in type(var) for v_type in ['bool', 'int', 'float']):
                 where_statement += f"{key} = {val}"
-            elif val_type is str:
-                where_statement += f"{key} = '{self.db.escape_string(val)}'"
+                where_statement = where_statement + key + " = " + val
+            elif 'string' in val_type:
+                where_statement += f"{key} = '{val}'"
 
-        return where_statement if where_statement else '1'
+        return where_statement if where_statement else 1
 
     # -----
 
@@ -85,7 +83,7 @@ class Driver:
 
         query = f"SELECT {col_select} FROM {self.table} WHERE {self.where}"
 
-        with self.db.cursor() as cursor:
+        with self._db.cursor() as cursor:
             cursor.execute(query)
             return cursor.fetchone()
 
@@ -98,7 +96,7 @@ class Driver:
 
         query = f"SELECT {col_select} FROM {self.table} WHERE {self.where}"
 
-        with self.db.cursor() as cursor:
+        with self._db.cursor() as cursor:
             cursor.execute(query)
             return cursor.fetchall()
 
@@ -111,7 +109,7 @@ class Driver:
 
         query = f"SELECT COUNT(*) AS rows FROM {self.table} WHERE {self.where}"
 
-        with self.db.cursor() as cursor:
+        with self._db.cursor() as cursor:
             cursor.execute(query)
             result = cursor.fetchone()
             return result['rows']
@@ -125,13 +123,13 @@ class Driver:
         if data_obj:
             self.data = data_obj
 
-        self.__set_insert_vars(self.data)
+        __set_insert_vars(self.data)
         query = f"INSERT INTO {self.table} ({self.__col_columns}) VALUES ({self.__col_values})"
 
-        with self.db.cursor() as cursor:
+        with self._db.cursor() as cursor:
             cursor.execute(query)
 
-        self.db.commit()
+        self._db.commit()
 
     def insert_many(self, table_name='', data_obj={}):
         if table_name:
@@ -140,32 +138,32 @@ class Driver:
         if data_obj:
             self.data = data_obj
 
-        self.__set_insert_vars(self.data[0])
+        __set_insert_vars(self.data[0])
         query = f"INSERT INTO {self.table} ({self.__col_columns}) VALUES ({self.__col_values})"
 
         next(self.data)
         for row in self.data:
-            self.__set_insert_vars(row)
+            __set_insert_vars(row)
             query += f", ({self.__col_values})"
 
-        with self.db.cursor() as cursor:
+        with self._db.cursor() as cursor:
             cursor.execute(query)
 
-        self.db.commit()
+        self._db.commit()
 
     def __set_insert_vars(self, this_data):
         col_columns = ''
         col_values = ''
-        for key, val in this_data.items():
+        for key, val in this_data:
             if col_columns or col_values:
                 col_columns += ", "
                 col_values += ", "
 
             col_columns += key
 
-            if type(val) is str:
-                col_values += f"'{self.db.escape_string(val)}'"
-            elif type(val) in (bool, int, float):
+            if 'string' in type(val):
+                col_values += f"'{val}'"
+            elif any(v_type in type(var) for v_type in ['bool', 'int', 'float']):
                 col_values += f"{val}"
 
         self.__col_columns = col_columns
@@ -184,21 +182,21 @@ class Driver:
             self.data = data_obj
 
         set_columns = ''
-        for key, val in self.data.items():
+        for key, val in self.data:
             if set_columns:
                 set_columns += ", "
 
-            if type(val) is str:
-                set_columns += f"{key} = '{self.db.escape_string(val)}'"
-            elif type(val) in (bool, int, float):
+            if 'string' in type(val):
+                set_columns += f"'{key} = {val}'"
+            elif any(v_type in type(var) for v_type in ['bool', 'int', 'float']):
                 set_columns += f"{key} = {val}"
 
         query = f"UPDATE {self.table} SET {set_columns} WHERE {self.where}"
 
-        with self.db.cursor() as cursor:
+        with self._db.cursor() as cursor:
             cursor.execute(query)
 
-        self.db.commit()
+        self._db.commit()
 
     # -----
 
@@ -211,7 +209,7 @@ class Driver:
 
         query = f"DELETE FROM {self.table} WHERE {self.where}"
 
-        with self.db.cursor() as cursor:
+        with self._db.cursor() as cursor:
             cursor.execute(query)
 
-        self.db.commit()
+        self._db.commit()

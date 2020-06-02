@@ -5,9 +5,6 @@ from pymongo import MongoClient
 from bson import ObjectId
 
 class Driver:
-    _where = {}
-    _data = {}
-
     def __init__(self, host, port, database, authorize=False, username='', password=''):
         self._host = host
         self._port = port
@@ -33,7 +30,7 @@ class Driver:
     def __connect_to_client(self):
         self.__client = MongoClient(self.__client_url)
 
-        self.db = self.__client[self.database]
+        self._db = self.__client[self.database]
 
     # -----
 
@@ -51,7 +48,7 @@ class Driver:
 
     @property
     def collection(self):
-        return self.db[self._collection]
+        return self._db[self._collection]
 
     @collection.setter
     def collection(self, collection_name):
@@ -77,7 +74,7 @@ class Driver:
 
     # -----
 
-    def _id(self, id = ''):
+    def o_id(self, id = ''):
         return ObjectId(id)
 
     # -----

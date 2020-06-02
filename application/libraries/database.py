@@ -10,24 +10,14 @@ from application.config.database import *
 # Generate Database Helper
 class DatabaseHelper:
     def __init__(self, driver_name):
-        self.driver = driver_name
+        self._driver = driver_name
         pass
-
-    # -----
-
-    @property
-    def driver(self):
-        return self.__driver
-
-    @driver.setter
-    def driver(self, driver_name):
-        self.__driver = driver_name
 
     # -----
 
     def clean_dict(self, dict_object):
         for key in dict_object:
-            if key != '_id' or self.driver != 'mongodb':
+            if key != '_id' or self._driver != 'mongodb':
                 dict_object[key] = escape(dict_object[key])
             else:
                 dict_object[key] = db.o_id(dict_object[key])
