@@ -17,10 +17,13 @@ class DatabaseHelper:
 
     def clean_dict(self, dict_object):
         for key in dict_object:
-            if '_id' in key or self._driver != 'mongodb':
-                dict_object[key] = escape(dict_object[key])
+            if 'dict' not in type(dict_object[key]):
+                if '_id' not in key or self._driver != 'mongodb':
+                    dict_object[key] = escape(dict_object[key])
+                else:
+                    dict_object[key] = db.o_id(dict_object[key])
             else:
-                dict_object[key] = db.o_id(dict_object[key])
+                dict_object[key] = self.clean_dict(dict_object[key])
 
         return dict_object
 
