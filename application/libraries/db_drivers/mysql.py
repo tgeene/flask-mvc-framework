@@ -123,7 +123,7 @@ class Driver:
         if data_obj:
             self.data = data_obj
 
-        __set_insert_vars(self.data)
+        self.__set_insert_vars(self.data)
         query = f"INSERT INTO {self.table} ({self.__col_columns}) VALUES ({self.__col_values})"
 
         with self._db.cursor() as cursor:
@@ -131,19 +131,19 @@ class Driver:
 
         self._db.commit()
 
-    def insert_many(self, table_name='', data_obj={}):
+    def insert_many(self, table_name='', data_obj=[]):
         if table_name:
             self.table = table_name
 
         if data_obj:
             self.data = data_obj
 
-        __set_insert_vars(self.data[0])
+        self.__set_insert_vars(self.data[0])
         query = f"INSERT INTO {self.table} ({self.__col_columns}) VALUES ({self.__col_values})"
 
         next(self.data)
         for row in self.data:
-            __set_insert_vars(row)
+            self.__set_insert_vars(row)
             query += f", ({self.__col_values})"
 
         with self._db.cursor() as cursor:

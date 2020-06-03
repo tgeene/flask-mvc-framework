@@ -74,7 +74,7 @@ class Driver:
 
     # -----
 
-    def o_id(self, id = ''):
+    def o_id(self, id=''):
         return ObjectId(id)
 
     # -----
@@ -108,7 +108,7 @@ class Driver:
 
     # -----
 
-    def aggregate(self, collection_name, pipeline, options={}):
+    def aggregate(self, collection_name='', pipeline=[], options={}):
         if collection_name:
             self.collection = collection_name
 
@@ -125,7 +125,7 @@ class Driver:
 
         return self.collection.insert_one(self.data).inserted_id
 
-    def insert_many(self, collection_name='', data_obj={}):
+    def insert_many(self, collection_name='', data_obj=[]):
         if collection_name:
             self.collection = collection_name
 
