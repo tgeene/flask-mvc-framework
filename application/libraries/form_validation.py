@@ -5,6 +5,9 @@ import validators
 # load flask sub-systems
 from flask import request
 
+# load system libraries
+from application.libraries.database import *
+
 # Generate Form Validation Library
 class FormValidation:
     _fields = {}
@@ -203,6 +206,18 @@ class FormValidation:
         options = options.split(',')
 
         if value not in options:
+            self._errors.append(f"{self._fields[field]['label']} is not an accepted value.")
+            return False
+
+        return True
+
+    def _in_db(self, field, value, db_select):
+        db_parts = db_select.split('.')
+
+        where = {
+            db_parts[1]: value
+        }
+        if not db.get_count(db_parts[0], where):
             self._errors.append(f"{self._fields[field]['label']} is not an accepted value.")
             return False
 
