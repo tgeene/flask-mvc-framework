@@ -7,7 +7,7 @@ from flask import request
 
 # Generate Form Validation Library
 class FormValidation:
-    _fields = []
+    _fields = {}
     _inputs = {}
     _errors = []
 
