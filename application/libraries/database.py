@@ -17,7 +17,7 @@ class DatabaseHelper:
 
     def clean_dict(self, dict_object):
         for key in dict_object:
-            if key != '_id' or self._driver != 'mongodb':
+            if '_id' in key or self._driver != 'mongodb':
                 dict_object[key] = escape(dict_object[key])
             else:
                 dict_object[key] = db.o_id(dict_object[key])
