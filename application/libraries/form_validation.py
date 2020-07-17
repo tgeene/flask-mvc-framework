@@ -26,10 +26,17 @@ class FormValidation:
         self._fields[field_name] = field
 
     def validate(self):
+        content = {}
+        if request.is_json:
+            content = request.get_json()
+
         for field in self._fields:
             if request.method == "POST":
-                value = request.form.get(self._fields[field]['name'])
-            else:
+                if content:
+                    value = content[self._fields[field]['name']]
+                else:
+                    value = request.form.get(self._fields[field]['name'])
+            elif request.method == "GET":
                 value = request.values.get(self._fields[field]['name'])
 
             self._inputs[self._fields[field]['name']] = value
