@@ -50,7 +50,7 @@ class Response:
     def respond_deleted(self, data: dict, message: str = ''):
         return self.respond(data, 200, message)
 
-    def respond_no_conent(self, message: str = 'No Content'):
+    def respond_no_content(self, message: str = 'No Content'):
         return self.respond(status=204, message=message)
 
     # -----
