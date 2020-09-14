@@ -1,14 +1,22 @@
+# load py systems
+from typing import Union
+
 # load flask sub-systems
 import pymysql.cursors
 
+
 class Driver:
-    def __init__(self, host, port, database, authorize=False, username='', password=''):
+    def __init__(self, host: str, port: str, db: str, auth: Union[bool, str] = False, user: str = '', pw: str = ''):
         self._host = host
         self._port = port
-        self._database = database
-        self._authorize = authorize
-        self._username = username
-        self._password = password
+        self._database = db
+        self._authorize = auth
+        self._username = user
+        self._password = pw
+
+        self._table = {}
+        self._where = {}
+        self._data = {}
 
         self.__connect_to_client()
 
@@ -16,12 +24,12 @@ class Driver:
 
     def __connect_to_client(self):
         self._db = pymysql.connect(host=self._host,
-                                  port=self._port,
-                                  user=self._username,
-                                  password=self._password,
-                                  db=self._database,
-                                  charset='utf8',
-                                  cursorclass=pymysql.cursors.DictCursor)
+                                   port=self._port,
+                                   user=self._username,
+                                   password=self._password,
+                                   db=self._database,
+                                   charset='utf8',
+                                   cursorclass=pymysql.cursors.DictCursor)
 
     # -----
 
@@ -30,7 +38,7 @@ class Driver:
         return self._table
 
     @table.setter
-    def table(self, table_name):
+    def table(self, table_name: str):
         self._table = table_name
 
     # -----
@@ -40,10 +48,10 @@ class Driver:
         return self.__where_builder(self._where)
 
     @where.setter
-    def where(self, where_obj):
+    def where(self, where_obj: Union[dict, list]):
         self._where = where_obj
 
-    def __where_builder(self, this_obj, this_join='AND'):
+    def __where_builder(self, this_obj: Union[dict, list], this_join: str = 'AND'):
         where_statement = ''
         for key, val in this_obj:
             if where_statement:
@@ -69,14 +77,13 @@ class Driver:
         return self._data
 
     @data.setter
-    def data(self, data_obj):
+    def data(self, data_obj: dict):
         self._data = data_obj
 
     # -----
 
-    def get_one(self, table_name='', where_obj={}, col_select='*'):
-        if table_name:
-            self.table = table_name
+    def get_one(self, table_name: str, where_obj: Union[dict, list] = None, col_select: str = '*'):
+        self.table = table_name
 
         if where_obj:
             self.where = where_obj
@@ -87,9 +94,8 @@ class Driver:
             cursor.execute(query)
             return cursor.fetchone()
 
-    def get(self, table_name='', where_obj={}, col_select='*'):
-        if table_name:
-            self.table = table_name
+    def get(self, table_name: str, where_obj: Union[dict, list] = None, col_select: str = '*'):
+        self.table = table_name
 
         if where_obj:
             self.where = where_obj
@@ -100,9 +106,8 @@ class Driver:
             cursor.execute(query)
             return cursor.fetchall()
 
-    def get_count(self, table_name='', where_obj={}):
-        if table_name:
-            self.table = table_name
+    def get_count(self, table_name: str, where_obj: Union[dict, list] = None):
+        self.table = table_name
 
         if where_obj:
             self.where = where_obj
@@ -116,9 +121,8 @@ class Driver:
 
     # -----
 
-    def insert_one(self, table_name='', data_obj={}):
-        if table_name:
-            self.table = table_name
+    def insert_one(self, table_name: str, data_obj: dict = None):
+        self.table = table_name
 
         if data_obj:
             self.data = data_obj
@@ -131,9 +135,8 @@ class Driver:
 
         self._db.commit()
 
-    def insert_many(self, table_name='', data_obj=[]):
-        if table_name:
-            self.table = table_name
+    def insert_many(self, table_name: str, data_obj: list = None):
+        self.table = table_name
 
         if data_obj:
             self.data = data_obj
@@ -151,7 +154,7 @@ class Driver:
 
         self._db.commit()
 
-    def __set_insert_vars(self, this_data):
+    def __set_insert_vars(self, this_data: dict = None):
         col_columns = ''
         col_values = ''
         for key, val in this_data:
@@ -171,9 +174,8 @@ class Driver:
 
     # -----
 
-    def update(self, table_name='', where_obj={}, data_obj={}):
-        if table_name:
-            self.table = table_name
+    def update(self, table_name: str, where_obj: Union[dict, list] = None, data_obj: dict = None):
+        self.table = table_name
 
         if where_obj:
             self.where = where_obj
@@ -200,9 +202,8 @@ class Driver:
 
     # -----
 
-    def delete(self, table_name='', where_obj={}):
-        if table_name:
-            self.table = table_name
+    def delete(self, table_name: str, where_obj: Union[dict, list] = None):
+        self.table = table_name
 
         if where_obj:
             self.where = where_obj

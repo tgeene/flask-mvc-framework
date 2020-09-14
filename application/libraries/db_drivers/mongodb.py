@@ -1,18 +1,27 @@
+# load py systems
+from typing import Union
+
 # load flask sub-systems
 from pymongo import MongoClient
 
 # load ObjectID system
 from bson import ObjectId
 
+
 class Driver:
-    def __init__(self, host, port, database, authorize=False, username='', password=''):
+    def __init__(self, host: str, port: str, db: str, auth: Union[bool, str] = False, user: str = '', pw: str = ''):
         self._host = host
         self._port = port
-        self._authorize = authorize
-        self._username = username
-        self._password = password
+        self._authorize = auth
+        self._username = user
+        self._password = pw
 
-        self.database = database
+        self._collection = ""
+        self._table = {}
+        self._where = {}
+        self._data = {}
+
+        self.database = db
 
     # -----
 
@@ -39,7 +48,7 @@ class Driver:
         return self.__database
 
     @database.setter
-    def database(self, database_name):
+    def database(self, database_name: str):
         self.__database = database_name
 
         self.__connect_to_client()
@@ -51,7 +60,7 @@ class Driver:
         return self._db[self._collection]
 
     @collection.setter
-    def collection(self, collection_name):
+    def collection(self, collection_name: str):
         self._collection = collection_name
 
     # -----
@@ -61,7 +70,7 @@ class Driver:
         return self._where
 
     @where.setter
-    def where(self, where_obj):
+    def where(self, where_obj: dict):
         self._where = where_obj
 
     @property
@@ -69,37 +78,35 @@ class Driver:
         return self._data
 
     @data.setter
-    def data(self, data_obj):
+    def data(self, data_obj: dict):
         self._data = data_obj
 
     # -----
 
-    def o_id(self, id=''):
-        return ObjectId(id)
+    @staticmethod
+    def o_id(id_str: str = ''):
+        return ObjectId(id_str)
 
     # -----
 
-    def get_one(self, collection_name='', where_obj={}):
-        if collection_name:
-            self.collection = collection_name
+    def get_one(self, collection_name: str, where_obj: Union[dict, list] = None):
+        self.collection = collection_name
 
         if where_obj:
             self.where = where_obj
 
         return self.collection.find_one(self.where)
 
-    def get(self, collection_name='', where_obj={}):
-        if collection_name:
-            self.collection = collection_name
+    def get(self, collection_name: str, where_obj: Union[dict, list] = None):
+        self.collection = collection_name
 
         if where_obj:
             self.where = where_obj
 
         return self.collection.find(self.where)
 
-    def get_count(self, collection_name='', where_obj={}):
-        if collection_name:
-            self.collection = collection_name
+    def get_count(self, collection_name: str, where_obj: Union[dict, list] = None):
+        self.collection = collection_name
 
         if where_obj:
             self.where = where_obj
@@ -108,26 +115,29 @@ class Driver:
 
     # -----
 
-    def aggregate(self, collection_name='', pipeline=[], options={}):
-        if collection_name:
-            self.collection = collection_name
+    def aggregate(self, collection_name: str, pipeline: list = None, options: dict = None):
+        self.collection = collection_name
+
+        if pipeline is None:
+            pipeline = []
+
+        if options is None:
+            options = {}
 
         return self.collection.aggregate(pipeline, options)
 
     # -----
 
-    def insert_one(self, collection_name='', data_obj={}):
-        if collection_name:
-            self.collection = collection_name
+    def insert_one(self, collection_name: str, data_obj: dict = None):
+        self.collection = collection_name
 
         if data_obj:
             self.data = data_obj
 
         return self.collection.insert_one(self.data).inserted_id
 
-    def insert_many(self, collection_name='', data_obj=[]):
-        if collection_name:
-            self.collection = collection_name
+    def insert_many(self, collection_name: str, data_obj: list = None):
+        self.collection = collection_name
 
         if data_obj:
             self.data = data_obj
@@ -136,9 +146,8 @@ class Driver:
 
     # -----
 
-    def update(self, collection_name='', where_obj={}, data_obj={}):
-        if collection_name:
-            self.collection = collection_name
+    def update(self, collection_name: str, where_obj: Union[dict, list] = None, data_obj: dict = None):
+        self.collection = collection_name
 
         if where_obj:
             self.where = where_obj
@@ -150,18 +159,16 @@ class Driver:
 
     # -----
 
-    def delete_one(self, collection_name='', where_obj={}):
-        if collection_name:
-            self.collection = collection_name
+    def delete_one(self, collection_name: str, where_obj: Union[dict, list] = None):
+        self.collection = collection_name
 
         if where_obj:
             self.where = where_obj
 
         return self.collection.delete_one(self.where)
 
-    def delete_many(self, collection_name='', where_obj={}):
-        if collection_name:
-            self.collection = collection_name
+    def delete_many(self, collection_name: str, where_obj: Union[dict, list] = None):
+        self.collection = collection_name
 
         if where_obj:
             self.where = where_obj
