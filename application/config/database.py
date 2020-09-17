@@ -1,3 +1,4 @@
+# Database config. Used in various libraries.
 config = {
     'driver': 'mysql',  # mongodb, mysql
     'host': '127.0.0.1',

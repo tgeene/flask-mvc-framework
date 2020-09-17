@@ -10,12 +10,14 @@ from application.config.database import *
 
 # Generate Database Helper
 class DatabaseHelper:
+    # Initiate Class
     def __init__(self, driver_name: str):
         self._driver = driver_name
         pass
 
     # -----
 
+    # Process dict and clean for database insert/update
     def clean_dict(self, dict_object: dict):
         for key in dict_object:
             if 'dict' not in type(dict_object[key]):
@@ -29,6 +31,7 @@ class DatabaseHelper:
         return dict_object
 
 
+# Assign Class to Variable
 database_helper = DatabaseHelper(config['driver'])
 
 # load driver

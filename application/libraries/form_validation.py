@@ -9,15 +9,21 @@ from flask import request
 # load system libraries
 from application.libraries.database import *
 
+
 # Generate Form Validation Library
 class FormValidation:
+    # Establish Class Variables
     _fields = {}
     _inputs = {}
     _errors = []
 
+    # Initiate Class
     def __init__(self):
         pass
 
+    # -----
+
+    # Add Field to Validation List
     def add_field(self, field_name: str, field_label: str, field_rules: str):
         field = {
             'name': field_name,
@@ -26,6 +32,7 @@ class FormValidation:
         }
         self._fields[field_name] = field
 
+    # Handle Validation of Form
     def validate(self):
         content = {}
         if request.is_json:
@@ -69,6 +76,9 @@ class FormValidation:
         }
         return result
 
+    # -----
+
+    # Validate if Value has a value
     def _required(self, field: str, value: Union[float, int, str]):
         if value is None or not value:
             self._errors.append(f"{self._fields[field]['label']} is a required field.")
@@ -76,6 +86,7 @@ class FormValidation:
 
         return True
 
+    # Validate if Value matches other Field
     def _matches(self, field: str, value: Union[float, int, str], match: str):
         if match not in self._fields:
             self._errors.append(f"{self._fields[field]['label']} match field not submitted for validation.")
@@ -92,6 +103,7 @@ class FormValidation:
 
         return True
 
+    # Validate if Value different than other Field
     def _differs(self, field: str, value: Union[float, int, str], match: str):
         if match not in self._fields:
             self._errors.append(f"{self._fields[field]['label']} match field not submitted for validation.")
@@ -108,6 +120,7 @@ class FormValidation:
 
         return True
 
+    # Validate if Value matches regex
     def _regex_match(self, field: str, value: Union[float, int, str], regex: str):
         regex_parts = list(filter(None, re.split('([\/]+)', regex)))
 
@@ -135,6 +148,7 @@ class FormValidation:
 
         return True
 
+    # Validate if Value is greater than or equal to num of characters
     def _min_length(self, field: str, value: Union[float, int, str], length: str):
         if len(str(value)) < int(length):
             self._errors.append(f"{self._fields[field]['label']} must be at least {length} characters long.")
@@ -142,6 +156,7 @@ class FormValidation:
 
         return True
 
+    # Validate if Value is less than or equal to num of characters
     def _max_length(self, field: str, value: Union[float, int, str], length: str):
         if len(str(value)) > int(length):
             self._errors.append(f"{self._fields[field]['label']} cannot be longer than {length} characters long.")
@@ -149,6 +164,7 @@ class FormValidation:
 
         return True
 
+    # Validate if Value is exact number of characters
     def _exact_length(self, field: str, value: Union[float, int, str], length: str):
         if len(str(value)) == int(length):
             self._errors.append(f"{self._fields[field]['label']} must be exactly {length} characters long.")
@@ -156,6 +172,7 @@ class FormValidation:
 
         return True
 
+    # Validate if Value > Num
     def _greater_than(self, field: str, value: Union[float, int, str], num: str):
         if float(value) < float(num):
             self._errors.append(f"{self._fields[field]['label']} must be more than {num}.")
@@ -163,6 +180,7 @@ class FormValidation:
 
         return True
 
+    # Validate if Value >= Num
     def _greater_than_equal_to(self, field: str, value: Union[float, int, str], num: str):
         if float(value) <= float(num):
             self._errors.append(f"{self._fields[field]['label']} must be at least {num}.")
@@ -170,6 +188,7 @@ class FormValidation:
 
         return True
 
+    # Validate if Value < Num
     def _less_than(self, field: str, value: Union[float, int, str], num: str):
         if float(value) > float(num):
             self._errors.append(f"{self._fields[field]['label']} must be less than {num}.")
@@ -177,6 +196,7 @@ class FormValidation:
 
         return True
 
+    # Validate if Value <= Num
     def _less_than_equal_to(self, field: str, value: Union[float, int, str], num: str):
         if float(value) >= float(num):
             self._errors.append(f"{self._fields[field]['label']} cannot be bigger than {num}.")
@@ -184,6 +204,7 @@ class FormValidation:
 
         return True
 
+    # Validate if Value is in List
     def _in_list(self, field: str, value: Union[float, int, str], options: str):
         options = options.split(',')
 
@@ -193,6 +214,7 @@ class FormValidation:
 
         return True
 
+    # Validate if Value is in Database
     def _in_db(self, field: str, value: Union[float, int, str], db_select: str):
         db_parts = db_select.split('.')
 
@@ -205,11 +227,13 @@ class FormValidation:
 
         return True
 
+    # Validate if Value is only Letters
     def _alpha(self, field: str, value: Union[float, int, str]):
         if not re.match('^[a-zA-Z]+$', value):
             self._errors.append(f"{self._fields[field]['label']} may only have letters.")
             return False
 
+    # Validate if Value is only Letters, Dashes, and Underscores
     def _alpha_dash(self, field: str, value: Union[float, int, str]):
         if not re.match('^[a-zA-Z\-_]+$', value):
             self._errors.append(f"{self._fields[field]['label']} may only have letters, dashes, and underscores.")
@@ -217,16 +241,19 @@ class FormValidation:
 
         return True
 
+    # Validate if Value is only Letters and Numbers
     def _alpha_numeric(self, field: str, value: Union[float, int, str]):
         if not re.match('^[a-zA-Z0-9]+$', value):
             self._errors.append(f"{self._fields[field]['label']} may only have letters and numbers.")
             return False
 
+    # Validate if Value is only Letters, Numbers, Dashes, and Underscores
     def _alpha_numeric_dash(self, field: str, value: Union[float, int, str]):
         if not re.match('^[a-zA-Z0-9\-_]+$', value):
             self._errors.append(f"{self._fields[field]['label']} may only have letters, numbers, dashes, and underscores.")
             return False
 
+    # Validate if Value is only Letters and Spaces
     def _alpha_space(self, field: str, value: Union[float, int, str]):
         if not re.match('^[a-zA-Z ]+$', value):
             self._errors.append(f"{self._fields[field]['label']} may only have letters and spaces.")
@@ -234,6 +261,7 @@ class FormValidation:
 
         return True
 
+    # Validate if Value is only Letters, Numbers, and Spaces
     def _alpha_numeric_space(self, field: str, value: Union[float, int, str]):
         if not re.match('^[a-zA-Z0-9 ]+$', value):
             self._errors.append(f"{self._fields[field]['label']} may only have letters, numbers, and spaces.")
@@ -241,6 +269,7 @@ class FormValidation:
 
         return True
 
+    # Validate if Value is a Number
     def _numeric(self, field: str, value: Union[float, int, str]):
         if not re.match('^[0-9.]+$', value):
             self._errors.append(f"{self._fields[field]['label']} must be a number.")
@@ -248,18 +277,22 @@ class FormValidation:
 
         return True
 
-    def _valid_email(self, field: str, value: Union[float, int, str]):
+    # Validate if String is Email
+    def _valid_email(self, field: str, value: str):
         if validators.email(value) is not True:
             self._errors.append(f"{self._fields[field]['label']} must be a valid email.")
             return False
 
         return True
 
-    def _valid_url(self, field: str, value: Union[float, int, str]):
+    # Validate if String is URL
+    def _valid_url(self, field: str, value: str):
         if validators.url(value) is not True:
             self._errors.append(f"{self._fields[field]['label']} must be a valid URL.")
             return False
 
         return True
 
+
+# Assign Class to Variable
 form_validation = FormValidation()

@@ -5,7 +5,14 @@ from typing import Union
 import pymysql.cursors
 
 
+# Generate MySQL Driver
 class Driver:
+    # Establish Class Variables
+    _table = {}
+    _where = {}
+    _data = {}
+
+    # Initiate Class
     def __init__(self, host: str, port: str, db: str, auth: Union[bool, str] = False, user: str = '', pw: str = ''):
         self._host = host
         self._port = port
@@ -14,14 +21,11 @@ class Driver:
         self._username = user
         self._password = pw
 
-        self._table = {}
-        self._where = {}
-        self._data = {}
-
         self.__connect_to_client()
 
     # -----
 
+    # Connect to DB
     def __connect_to_client(self):
         self._db = pymysql.connect(host=self._host,
                                    port=self._port,
@@ -33,24 +37,29 @@ class Driver:
 
     # -----
 
+    # Get Table Name
     @property
     def table(self):
         return self._table
 
+    # Set Table Name
     @table.setter
     def table(self, table_name: str):
         self._table = table_name
 
     # -----
 
+    # Get Where str
     @property
     def where(self):
         return self.__where_builder(self._where)
 
+    # Set Where dict
     @where.setter
     def where(self, where_obj: Union[dict, list]):
         self._where = where_obj
 
+    # Build Where str
     def __where_builder(self, this_obj: Union[dict, list], this_join: str = 'AND'):
         where_statement = ''
         for key, val in this_obj:
@@ -72,16 +81,19 @@ class Driver:
 
     # -----
 
+    # Get Data dict
     @property
     def data(self):
         return self._data
 
+    # Set Data dict
     @data.setter
     def data(self, data_obj: dict):
         self._data = data_obj
 
     # -----
 
+    # Get Single Matching DB Result
     def get_one(self, table_name: str, where_obj: Union[dict, list] = None, col_select: str = '*'):
         self.table = table_name
 
@@ -94,6 +106,7 @@ class Driver:
             cursor.execute(query)
             return cursor.fetchone()
 
+    # Get All Matching DB Results
     def get(self, table_name: str, where_obj: Union[dict, list] = None, col_select: str = '*'):
         self.table = table_name
 
@@ -106,6 +119,7 @@ class Driver:
             cursor.execute(query)
             return cursor.fetchall()
 
+    # Get Count of Matching DB Results
     def get_count(self, table_name: str, where_obj: Union[dict, list] = None):
         self.table = table_name
 
@@ -121,6 +135,7 @@ class Driver:
 
     # -----
 
+    # Insert One DB Record
     def insert_one(self, table_name: str, data_obj: dict = None):
         self.table = table_name
 
@@ -135,6 +150,7 @@ class Driver:
 
         self._db.commit()
 
+    # Insert Multiple DB Records
     def insert_many(self, table_name: str, data_obj: list = None):
         self.table = table_name
 
@@ -154,6 +170,7 @@ class Driver:
 
         self._db.commit()
 
+    # Build Insert str
     def __set_insert_vars(self, this_data: dict = None):
         col_columns = ''
         col_values = ''
@@ -174,6 +191,7 @@ class Driver:
 
     # -----
 
+    # Update All Matching DB Records
     def update(self, table_name: str, where_obj: Union[dict, list] = None, data_obj: dict = None):
         self.table = table_name
 
@@ -202,6 +220,7 @@ class Driver:
 
     # -----
 
+    # Delete All Matching DB Records
     def delete(self, table_name: str, where_obj: Union[dict, list] = None):
         self.table = table_name
 
