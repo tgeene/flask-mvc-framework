@@ -12,6 +12,7 @@ from bson import ObjectId
 class Driver:
     # Establish Class Variables
     _collection = ""
+    _database = ""
     _table = {}
     _where = {}
     _data = {}
@@ -20,9 +21,9 @@ class Driver:
     def __init__(self, host: str, port: str, db: str, auth: Union[bool, str] = False, user: str = '', pw: str = ''):
         self._host = host
         self._port = port
-        self._authorize = auth
-        self._username = user
-        self._password = pw
+        self._auth = auth
+        self._user = user
+        self._pw = pw
 
         self.database = db
 
@@ -31,12 +32,12 @@ class Driver:
     # Get DB Name
     @property
     def database(self):
-        return self.__database
+        return self._database
 
     # Set DB Name and Change Connection
     @database.setter
     def database(self, database_name: str):
-        self.__database = database_name
+        self._database = database_name
 
         self.__connect_to_client()
 
@@ -45,14 +46,11 @@ class Driver:
     # Create DB Connect URL by Vars
     @property
     def __client_url(self):
-        try:
-            url = self._host + ":" + str(self._port) + '/' + self._authorize
-            if self._username and self._password:
-                url = self._username + ":" + self._password + "@" + url
+        url = self._host + ":" + str(self._port) + '/' + self._auth
+        if self._user and self._pw:
+            url = self._user + ":" + self._pw + "@" + url
 
-            return "mongodb://" + url
-        except:
-            print("Error: Could not generate connection url from config.")
+        return "mongodb://" + url
 
     # Connect to DB
     def __connect_to_client(self):

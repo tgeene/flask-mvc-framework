@@ -7,7 +7,7 @@ from typing import Union
 from flask import request
 
 # load system libraries
-from application.libraries.database import *
+from system.libraries.database import db
 
 
 # Generate Form Validation Library
@@ -39,6 +39,7 @@ class FormValidation:
             content = request.get_json()
 
         for field in self._fields:
+            value = ""
             if request.method == "POST":
                 if content:
                     value = content[self._fields[field]['name']]

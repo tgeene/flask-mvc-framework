@@ -16,10 +16,10 @@ class Driver:
     def __init__(self, host: str, port: str, db: str, auth: Union[bool, str] = False, user: str = '', pw: str = ''):
         self._host = host
         self._port = port
-        self._database = db
-        self._authorize = auth
-        self._username = user
-        self._password = pw
+        self._db = db
+        self._auth = auth
+        self._user = user
+        self._pw = pw
 
         self.__connect_to_client()
 
@@ -27,13 +27,13 @@ class Driver:
 
     # Connect to DB
     def __connect_to_client(self):
-        self._db = pymysql.connect(host=self._host,
-                                   port=self._port,
-                                   user=self._username,
-                                   password=self._password,
-                                   db=self._database,
-                                   charset='utf8',
-                                   cursorclass=pymysql.cursors.DictCursor)
+        self._connection = pymysql.connect(host=self._host,
+                                           port=self._port,
+                                           user=self._user,
+                                           password=self._pw,
+                                           db=self._db,
+                                           charset='utf8',
+                                           cursorclass=pymysql.cursors.DictCursor)
 
     # -----
 
@@ -71,7 +71,7 @@ class Driver:
                 where_statement += f"({self.__where_builder(val, key)})"
             elif 'list' in val_type:
                 where_statement += f"{key} IN({val})"
-            elif any(v_type in type(var) for v_type in ['bool', 'int', 'float']):
+            elif any(v_type in type(val) for v_type in ['bool', 'int', 'float']):
                 where_statement += f"{key} = {val}"
                 where_statement = where_statement + key + " = " + val
             elif 'string' in val_type:
@@ -102,7 +102,7 @@ class Driver:
 
         query = f"SELECT {col_select} FROM {self.table} WHERE {self.where}"
 
-        with self._db.cursor() as cursor:
+        with self._connection.cursor() as cursor:
             cursor.execute(query)
             return cursor.fetchone()
 
@@ -115,7 +115,7 @@ class Driver:
 
         query = f"SELECT {col_select} FROM {self.table} WHERE {self.where}"
 
-        with self._db.cursor() as cursor:
+        with self._connection.cursor() as cursor:
             cursor.execute(query)
             return cursor.fetchall()
 
@@ -128,7 +128,7 @@ class Driver:
 
         query = f"SELECT COUNT(*) AS rows FROM {self.table} WHERE {self.where}"
 
-        with self._db.cursor() as cursor:
+        with self._connection.cursor() as cursor:
             cursor.execute(query)
             result = cursor.fetchone()
             return result['rows']
@@ -145,10 +145,10 @@ class Driver:
         self.__set_insert_vars(self.data)
         query = f"INSERT INTO {self.table} ({self.__col_columns}) VALUES ({self.__col_values})"
 
-        with self._db.cursor() as cursor:
+        with self._connection.cursor() as cursor:
             cursor.execute(query)
 
-        self._db.commit()
+        self._connection.commit()
 
     # Insert Multiple DB Records
     def insert_many(self, table_name: str, data_obj: list = None):
@@ -165,10 +165,10 @@ class Driver:
             self.__set_insert_vars(row)
             query += f", ({self.__col_values})"
 
-        with self._db.cursor() as cursor:
+        with self._connection.cursor() as cursor:
             cursor.execute(query)
 
-        self._db.commit()
+        self._connection.commit()
 
     # Build Insert str
     def __set_insert_vars(self, this_data: dict = None):
@@ -183,7 +183,7 @@ class Driver:
 
             if 'string' in type(val):
                 col_values += f"'{val}'"
-            elif any(v_type in type(var) for v_type in ['bool', 'int', 'float']):
+            elif any(v_type in type(val) for v_type in ['bool', 'int', 'float']):
                 col_values += f"{val}"
 
         self.__col_columns = col_columns
@@ -207,16 +207,16 @@ class Driver:
                 set_columns += ", "
 
             if 'string' in type(val):
-                set_columns += f"'{key} = {val}'"
-            elif any(v_type in type(var) for v_type in ['bool', 'int', 'float']):
+                set_columns += f"{key} = '{val}'"
+            elif any(v_type in type(val) for v_type in ['bool', 'int', 'float']):
                 set_columns += f"{key} = {val}"
 
         query = f"UPDATE {self.table} SET {set_columns} WHERE {self.where}"
 
-        with self._db.cursor() as cursor:
+        with self._connection.cursor() as cursor:
             cursor.execute(query)
 
-        self._db.commit()
+        self._connection.commit()
 
     # -----
 
@@ -229,7 +229,7 @@ class Driver:
 
         query = f"DELETE FROM {self.table} WHERE {self.where}"
 
-        with self._db.cursor() as cursor:
+        with self._connection.cursor() as cursor:
             cursor.execute(query)
 
-        self._db.commit()
+        self._connection.commit()

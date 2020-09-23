@@ -5,7 +5,7 @@ from flask import escape
 from importlib import import_module
 
 # load application vars
-from application.config.database import *
+from application.config.database import config
 
 
 # Generate Database Helper
@@ -35,8 +35,8 @@ class DatabaseHelper:
 database_helper = DatabaseHelper(config['driver'])
 
 # load driver
-database = import_module('application.libraries.db_drivers.' + config['driver'])
+database = import_module('system.libraries.db_drivers.' + config['driver'])
 
 # load database
 config.pop('driver', None)
-db = database
+db = database.Driver(**config)

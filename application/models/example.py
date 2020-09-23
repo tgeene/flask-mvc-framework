@@ -1,5 +1,6 @@
 # load application vars
-from application.libraries.database import db
+from system.libraries.database import db
+
 
 class ExampleModel:
     def __init__(self):
@@ -9,5 +10,6 @@ class ExampleModel:
         records = db.get('users')
 
         return records
+
 
 example_model = ExampleModel()

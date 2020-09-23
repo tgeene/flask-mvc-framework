@@ -1,5 +1,6 @@
-Flask
-validators
-pymongo
-bson
-pymysql
+Flask~=1.1.2
+validators~=0.18.1
+pymongo~=3.11.0
+bson~=0.5.10
+pymysql~=0.10.1
+Werkzeug~=1.0.1
