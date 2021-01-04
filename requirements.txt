@@ -1,7 +1,7 @@
 Flask~=1.1.2
-cryptography!=3.3.1
-validators~=0.18.1
-pymongo~=3.11.0
+Werkzeug~=1.0.1
+validators~=0.18.2
+pymongo~=3.11.2
+cryptography~=3.3.1
 bson~=0.5.10
 pymysql~=0.10.1
-Werkzeug~=1.0.1
