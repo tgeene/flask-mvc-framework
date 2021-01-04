@@ -6,10 +6,11 @@ from flask.views import MethodView
 from public import app
 from application.config.site import defaults
 from application.models.example import example_model
+from system.libraries.response import response
 
 
-# load page
-class Example(MethodView):
+# load page with example model/db usage
+class ExampleUseModel(MethodView):
     @staticmethod
     def get():
         data = defaults
@@ -22,4 +23,14 @@ class Example(MethodView):
         return render_template('model-with-db-connection.html', data=data)
 
 
-app.add_url_rule('/model-with-db-connection', view_func=Example.as_view('model_example'))
+app.add_url_rule('/model-with-db-connection', view_func=ExampleUseModel.as_view('model_example'))
+
+
+# load example API response
+class ExampleApiOutput(MethodView):
+    @staticmethod
+    def get():
+        return response.respond(message='Example 200 output.')
+
+
+app.add_url_rule('/api-response', view_func=ExampleApiOutput.as_view('api_example'))
