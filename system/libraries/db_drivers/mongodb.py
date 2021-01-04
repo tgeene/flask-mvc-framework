@@ -8,17 +8,16 @@ from pymongo import MongoClient
 from bson import ObjectId
 
 
-# Generate MongoDB Driver
 class Driver:
-    # Establish Class Variables
+    """Database driver for handling MongoDB connections."""
     _collection = ""
     _database = ""
     _table = {}
     _where = {}
     _data = {}
 
-    # Initiate Class
-    def __init__(self, host: str, port: str, db: str, auth: Union[bool, str] = False, user: str = '', pw: str = ''):
+    def __init__(self, host: str, port: str, db: str, auth: Union[bool, str] = False, user: str = '', pw: str = '') -> None:
+        """Load Driver and setup connection from config."""
         self._host = host
         self._port = port
         self._auth = auth
@@ -29,80 +28,80 @@ class Driver:
 
     # -----
 
-    # Get DB Name
     @property
-    def database(self):
+    def database(self) -> str:
+        """Get name of current database."""
         return self._database
 
-    # Set DB Name and Change Connection
     @database.setter
-    def database(self, database_name: str):
+    def database(self, database_name: str) -> None:
+        """Set name of database and update connection."""
         self._database = database_name
 
         self.__connect_to_client()
 
     # -----
 
-    # Create DB Connect URL by Vars
     @property
-    def __client_url(self):
+    def __client_url(self) -> str:
+        """Generate database connection url."""
         url = self._host + ":" + str(self._port) + '/' + self._auth
         if self._user and self._pw:
             url = self._user + ":" + self._pw + "@" + url
 
         return "mongodb://" + url
 
-    # Connect to DB
-    def __connect_to_client(self):
+    def __connect_to_client(self) -> None:
+        """Create database connection."""
         self.__client = MongoClient(self.__client_url)
 
         self._db = self.__client[self.database]
 
     # -----
 
-    # Get DB Point with Collection
     @property
-    def collection(self):
+    def collection(self) -> object:
+        """Get collection connection variable."""
         return self._db[self._collection]
 
-    # Set Collection Name
     @collection.setter
-    def collection(self, collection_name: str):
+    def collection(self, collection_name: str) -> None:
+        """Set current collection to use."""
         self._collection = collection_name
 
     # -----
 
-    # Get Dict
     @property
-    def where(self):
+    def where(self) -> dict:
+        """Get where dict."""
         return self._where
 
-    # Set Dict
     @where.setter
-    def where(self, where_obj: dict):
+    def where(self, where_obj: dict) -> None:
+        """Set where dict."""
         self._where = where_obj
 
-    # Get Dict
     @property
-    def data(self):
+    def data(self) -> dict:
+        """Get data dict."""
         return self._data
 
-    # Set Dict
     @data.setter
-    def data(self, data_obj: dict):
+    def data(self, data_obj: dict) -> None:
+        """Set data dict."""
         self._data = data_obj
 
     # -----
 
-    # Convert String to Object ID
     @staticmethod
-    def o_id(id_str: str = ''):
+    def o_id(id_str: str = '') -> object:
+        """Return an Object ID from give string."""
         return ObjectId(id_str)
 
     # -----
 
-    # Get Single Matching DB Result
-    def get_one(self, collection_name: str, where_obj: Union[dict, list] = None):
+    def get_one(self, collection_name: str, where_obj: Union[dict, list] = None) -> dict:
+        """Get single matching database result."""
         self.collection = collection_name
 
         if where_obj:
@@ -110,8 +109,8 @@ class Driver:
 
         return self.collection.find_one(self.where)
 
-    # Get All Matching DB Results
-    def get(self, collection_name: str, where_obj: Union[dict, list] = None):
+    def get(self, collection_name: str, where_obj: Union[dict, list] = None) -> dict:
+        """Get all matching database results."""
         self.collection = collection_name
 
         if where_obj:
@@ -119,8 +118,8 @@ class Driver:
 
         return self.collection.find(self.where)
 
-    # Get Count of Matching DB Results
-    def get_count(self, collection_name: str, where_obj: Union[dict, list] = None):
+    def get_count(self, collection_name: str, where_obj: Union[dict, list] = None) -> int:
+        """Get count of all matching database results."""
         self.collection = collection_name
 
         if where_obj:
@@ -130,8 +129,8 @@ class Driver:
 
     # -----
 
-    # Get All Matching DB Results using Aggregate
-    def aggregate(self, collection_name: str, pipeline: list = None, options: dict = None):
+    def aggregate(self, collection_name: str, pipeline: list = None, options: dict = None) -> dict:
+        """Get all matching database results using aggregate."""
         self.collection = collection_name
 
         if pipeline is None:
@@ -144,8 +143,8 @@ class Driver:
 
     # -----
 
-    # Insert One DB Record
-    def insert_one(self, collection_name: str, data_obj: dict = None):
+    def insert_one(self, collection_name: str, data_obj: dict = None) -> str:
+        """Insert one database record."""
         self.collection = collection_name
 
         if data_obj:
@@ -153,19 +152,19 @@ class Driver:
 
         return self.collection.insert_one(self.data).inserted_id
 
-    # Insert Multiple DB Records
-    def insert_many(self, collection_name: str, data_obj: list = None):
+    def insert_many(self, collection_name: str, data_obj: list = None) -> list:
+        """Insert multiple database records."""
         self.collection = collection_name
 
         if data_obj:
             self.data = data_obj
 
-        return self.collection.insert_many(self.data).inserted_id
+        return self.collection.insert_many(self.data).inserted_ids
 
     # -----
 
-    # Update All Matching DB Records
-    def update(self, collection_name: str, where_obj: Union[dict, list] = None, data_obj: dict = None):
+    def update(self, collection_name: str, where_obj: Union[dict, list] = None, data_obj: dict = None) -> int:
+        """Update all matching database records."""
         self.collection = collection_name
 
         if where_obj:
@@ -174,24 +173,24 @@ class Driver:
         if data_obj:
             self.data = data_obj
 
-        return self.collection.update(self.where, self.data)
+        return self.collection.update_many(self.where, self.data).modified_count
 
     # -----
 
-    # Delete One Matching DB Records
-    def delete_one(self, collection_name: str, where_obj: Union[dict, list] = None):
+    def delete_one(self, collection_name: str, where_obj: Union[dict, list] = None) -> int:
+        """Delete one matching database record."""
         self.collection = collection_name
 
         if where_obj:
             self.where = where_obj
 
-        return self.collection.delete_one(self.where)
+        return self.collection.delete_one(self.where).deleted_count
 
-    # Delete All Matching DB Records
-    def delete_many(self, collection_name: str, where_obj: Union[dict, list] = None):
+    def delete_many(self, collection_name: str, where_obj: Union[dict, list] = None) -> int:
+        """Delete all matching database records."""
         self.collection = collection_name
 
         if where_obj:
             self.where = where_obj
 
-        return self.collection.delete_many(self.where)
+        return self.collection.delete_many(self.where).deleted_count

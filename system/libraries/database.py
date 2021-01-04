@@ -8,17 +8,17 @@ from importlib import import_module
 from application.config.database import config
 
 
-# Generate Database Helper
 class DatabaseHelper:
-    # Initiate Class
-    def __init__(self, driver_name: str):
+    """Tools used for managing databases."""
+
+    def __init__(self, driver_name: str) -> None:
+        """Load DatabaseHelper and set driver."""
         self._driver = driver_name
-        pass
 
     # -----
 
-    # Process dict and clean for database insert/update
-    def clean_dict(self, dict_object: dict):
+    def clean_dict(self, dict_object: dict) -> dict:
+        """Clean inputs for database inserts/updates."""
         for key in dict_object:
             if 'dict' not in type(dict_object[key]):
                 if '_id' not in key or self._driver != 'mongodb':
