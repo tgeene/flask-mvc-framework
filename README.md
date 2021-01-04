@@ -1,26 +1,26 @@
-# Flask MVC
+# Flask MVC Framework
 
 A free, open-source MVC starting point of Python Web Application using the Flask Microframework.
 
 ## Features
 
 * MVC Structure
-  * Home Page Default
-  * Starter Template System
-  * Database Libraries
-    * MongoDB (Requires `pymongo`)
-    * MySQL (Requires `pymysql`)
-  * Other Libraries
-    * Form Validation
-* Expandability for:
-  * Hooks
-  * Libraries
+    * Site Configs
+    * Controllers
+    * Models
+    * Views
+        * Templating
+* Built in Libraries
+    * Database Handler
+        * MongoDB
+        * MySQL
+    * Form Validator
+    * JSON Response Builder
 
-## System Requirements
+## Technical Details
 
-* Python: 3.7+
-* Flask: 1.0+
-
-***
-
-[FMF Wiki](https://github.com/tgeene/flask-mvc-framework/wiki)
+* Current Version: 0.2
+* Base Requirements:
+    * Python v3.7+ (possibly lower, but untested)
+    * Flask v1.1.2
+* FMF Wiki: https://github.com/tgeene/flask-mvc-framework/wiki

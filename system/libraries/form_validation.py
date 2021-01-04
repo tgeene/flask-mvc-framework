@@ -7,24 +7,20 @@ from typing import Union
 from flask import request
 
 # load system libraries
-from application.libraries.database import *
+from system.libraries.database import db
 
 
 # Generate Form Validation Library
 class FormValidation:
-    # Establish Class Variables
+    """A tool for handling web form validation."""
     _fields = {}
     _inputs = {}
     _errors = []
 
-    # Initiate Class
-    def __init__(self):
-        pass
-
     # -----
 
-    # Add Field to Validation List
-    def add_field(self, field_name: str, field_label: str, field_rules: str):
+    def add_field(self, field_name: str, field_label: str, field_rules: str) -> None:
+        """Add Field to Validation List."""
         field = {
             'name': field_name,
             'label': field_label,
@@ -32,13 +28,14 @@ class FormValidation:
         }
         self._fields[field_name] = field
 
-    # Handle Validation of Form
-    def validate(self):
+    def validate(self) -> dict:
+        """Handle Validation of Form."""
         content = {}
         if request.is_json:
             content = request.get_json()
 
         for field in self._fields:
+            value = ""
             if request.method == "POST":
                 if content:
                     value = content[self._fields[field]['name']]
@@ -78,16 +75,16 @@ class FormValidation:
 
     # -----
 
-    # Validate if Value has a value
-    def _required(self, field: str, value: Union[float, int, str]):
+    def _required(self, field: str, value: Union[float, int, str]) -> bool:
+        """Validate if Value has a value."""
         if value is None or not value:
             self._errors.append(f"{self._fields[field]['label']} is a required field.")
             return False
 
         return True
 
-    # Validate if Value matches other Field
-    def _matches(self, field: str, value: Union[float, int, str], match: str):
+    def _matches(self, field: str, value: Union[float, int, str], match: str) -> bool:
+        """Validate if Value matches other Field."""
         if match not in self._fields:
             self._errors.append(f"{self._fields[field]['label']} match field not submitted for validation.")
             return False
@@ -103,8 +100,8 @@ class FormValidation:
 
         return True
 
-    # Validate if Value different than other Field
-    def _differs(self, field: str, value: Union[float, int, str], match: str):
+    def _differs(self, field: str, value: Union[float, int, str], match: str) -> bool:
+        """Validate if Value different than other Field."""
         if match not in self._fields:
             self._errors.append(f"{self._fields[field]['label']} match field not submitted for validation.")
             return False
@@ -120,8 +117,8 @@ class FormValidation:
 
         return True
 
-    # Validate if Value matches regex
-    def _regex_match(self, field: str, value: Union[float, int, str], regex: str):
+    def _regex_match(self, field: str, value: Union[float, int, str], regex: str) -> bool:
+        """Validate if Value matches regex."""
         regex_parts = list(filter(None, re.split('([\/]+)', regex)))
 
         flags = 0
@@ -148,64 +145,64 @@ class FormValidation:
 
         return True
 
-    # Validate if Value is greater than or equal to num of characters
-    def _min_length(self, field: str, value: Union[float, int, str], length: str):
+    def _min_length(self, field: str, value: Union[float, int, str], length: str) -> bool:
+        """Validate if Value is greater than or equal to num of characters."""
         if len(str(value)) < int(length):
             self._errors.append(f"{self._fields[field]['label']} must be at least {length} characters long.")
             return False
 
         return True
 
-    # Validate if Value is less than or equal to num of characters
-    def _max_length(self, field: str, value: Union[float, int, str], length: str):
+    def _max_length(self, field: str, value: Union[float, int, str], length: str) -> bool:
+        """Validate if Value is less than or equal to num of characters."""
         if len(str(value)) > int(length):
             self._errors.append(f"{self._fields[field]['label']} cannot be longer than {length} characters long.")
             return False
 
         return True
 
-    # Validate if Value is exact number of characters
-    def _exact_length(self, field: str, value: Union[float, int, str], length: str):
+    def _exact_length(self, field: str, value: Union[float, int, str], length: str) -> bool:
+        """Validate if Value is exact number of characters."""
         if len(str(value)) == int(length):
             self._errors.append(f"{self._fields[field]['label']} must be exactly {length} characters long.")
             return False
 
         return True
 
-    # Validate if Value > Num
-    def _greater_than(self, field: str, value: Union[float, int, str], num: str):
+    def _greater_than(self, field: str, value: Union[float, int, str], num: str) -> bool:
+        """Validate if Value > Num"""
         if float(value) < float(num):
             self._errors.append(f"{self._fields[field]['label']} must be more than {num}.")
             return False
 
         return True
 
-    # Validate if Value >= Num
-    def _greater_than_equal_to(self, field: str, value: Union[float, int, str], num: str):
+    def _greater_than_equal_to(self, field: str, value: Union[float, int, str], num: str) -> bool:
+        """Validate if Value >= Num"""
         if float(value) <= float(num):
             self._errors.append(f"{self._fields[field]['label']} must be at least {num}.")
             return False
 
         return True
 
-    # Validate if Value < Num
-    def _less_than(self, field: str, value: Union[float, int, str], num: str):
+    def _less_than(self, field: str, value: Union[float, int, str], num: str) -> bool:
+        """Validate if Value < Num."""
         if float(value) > float(num):
             self._errors.append(f"{self._fields[field]['label']} must be less than {num}.")
             return False
 
         return True
 
-    # Validate if Value <= Num
-    def _less_than_equal_to(self, field: str, value: Union[float, int, str], num: str):
+    def _less_than_equal_to(self, field: str, value: Union[float, int, str], num: str) -> bool:
+        """Validate if Value <= Num."""
         if float(value) >= float(num):
             self._errors.append(f"{self._fields[field]['label']} cannot be bigger than {num}.")
             return False
 
         return True
 
-    # Validate if Value is in List
-    def _in_list(self, field: str, value: Union[float, int, str], options: str):
+    def _in_list(self, field: str, value: Union[float, int, str], options: str) -> bool:
+        """Validate if Value is in List."""
         options = options.split(',')
 
         if value not in options:
@@ -214,8 +211,8 @@ class FormValidation:
 
         return True
 
-    # Validate if Value is in Database
-    def _in_db(self, field: str, value: Union[float, int, str], db_select: str):
+    def _in_db(self, field: str, value: Union[float, int, str], db_select: str) -> bool:
+        """Validate if Value is in Database."""
         db_parts = db_select.split('.')
 
         where = {
@@ -227,66 +224,66 @@ class FormValidation:
 
         return True
 
-    # Validate if Value is only Letters
-    def _alpha(self, field: str, value: Union[float, int, str]):
+    def _alpha(self, field: str, value: Union[float, int, str]) -> bool:
+        """Validate if Value is only Letters."""
         if not re.match('^[a-zA-Z]+$', value):
             self._errors.append(f"{self._fields[field]['label']} may only have letters.")
             return False
 
-    # Validate if Value is only Letters, Dashes, and Underscores
-    def _alpha_dash(self, field: str, value: Union[float, int, str]):
+    def _alpha_dash(self, field: str, value: Union[float, int, str]) -> bool:
+        """Validate if Value is only Letters, Dashes, and Underscores."""
         if not re.match('^[a-zA-Z\-_]+$', value):
             self._errors.append(f"{self._fields[field]['label']} may only have letters, dashes, and underscores.")
             return False
 
         return True
 
-    # Validate if Value is only Letters and Numbers
-    def _alpha_numeric(self, field: str, value: Union[float, int, str]):
+    def _alpha_numeric(self, field: str, value: Union[float, int, str]) -> bool:
+        """Validate if Value is only Letters and Numbers."""
         if not re.match('^[a-zA-Z0-9]+$', value):
             self._errors.append(f"{self._fields[field]['label']} may only have letters and numbers.")
             return False
 
-    # Validate if Value is only Letters, Numbers, Dashes, and Underscores
-    def _alpha_numeric_dash(self, field: str, value: Union[float, int, str]):
+    def _alpha_numeric_dash(self, field: str, value: Union[float, int, str]) -> bool:
+        """Validate if Value is only Letters, Numbers, Dashes, and Underscores."""
         if not re.match('^[a-zA-Z0-9\-_]+$', value):
             self._errors.append(f"{self._fields[field]['label']} may only have letters, numbers, dashes, and underscores.")
             return False
 
-    # Validate if Value is only Letters and Spaces
-    def _alpha_space(self, field: str, value: Union[float, int, str]):
+    def _alpha_space(self, field: str, value: Union[float, int, str]) -> bool:
+        """Validate if Value is only Letters and Spaces."""
         if not re.match('^[a-zA-Z ]+$', value):
             self._errors.append(f"{self._fields[field]['label']} may only have letters and spaces.")
             return False
 
         return True
 
-    # Validate if Value is only Letters, Numbers, and Spaces
-    def _alpha_numeric_space(self, field: str, value: Union[float, int, str]):
+    def _alpha_numeric_space(self, field: str, value: Union[float, int, str]) -> bool:
+        """Validate if Value is only Letters, Numbers, and Spaces."""
         if not re.match('^[a-zA-Z0-9 ]+$', value):
             self._errors.append(f"{self._fields[field]['label']} may only have letters, numbers, and spaces.")
             return False
 
         return True
 
-    # Validate if Value is a Number
-    def _numeric(self, field: str, value: Union[float, int, str]):
+    def _numeric(self, field: str, value: Union[float, int, str]) -> bool:
+        """Validate if Value is a Number."""
         if not re.match('^[0-9.]+$', value):
             self._errors.append(f"{self._fields[field]['label']} must be a number.")
             return False
 
         return True
 
-    # Validate if String is Email
-    def _valid_email(self, field: str, value: str):
+    def _valid_email(self, field: str, value: str) -> bool:
+        """Validate if String is Email."""
         if validators.email(value) is not True:
             self._errors.append(f"{self._fields[field]['label']} must be a valid email.")
             return False
 
         return True
 
-    # Validate if String is URL
-    def _valid_url(self, field: str, value: str):
+    def _valid_url(self, field: str, value: str) -> bool:
+        """Validate if String is URL."""
         if validators.url(value) is not True:
             self._errors.append(f"{self._fields[field]['label']} must be a valid URL.")
             return False

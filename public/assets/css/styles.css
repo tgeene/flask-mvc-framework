@@ -1,0 +1,71 @@
+:root {
+	--main-bg-color: #f7f7f7;
+    --secondary-bg-color: #e7e7e7;
+	--border-text-color: #0f0f0f;
+	--main-color: #D9513F;
+	--dark-color: #8C3B30;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--main-bg-color: #0f0f0f;
+		--secondary-bg-color: #1f1f1f;
+		--border-text-color: #f7f7f7;
+		--main-color: #BADA55;
+		--dark-color: #758C29;
+	}
+}
+
+body {
+    background-color: var(--main-bg-color);
+    color: var(--border-text-color);
+}
+
+h1 {
+    font-size: 1.8em;
+}
+h2 {
+    font-size: 1.6em;
+}
+h3 {
+    font-size: 1.4em;
+}
+h4 {
+    font-size: 1.2em;
+}
+
+a {
+    text-decoration: none;
+    color: var(--main-color);
+}
+
+header, footer {
+    text-align: center;
+}
+#header-logo, header nav, main, footer {
+    padding: 5px;
+}
+#header-logo a {
+    color: var(--border-text-color);
+    font-size: 2em;
+}
+header nav {
+    background-color: var(--secondary-bg-color);
+}
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+nav li {
+    display: inline-block;
+}
+nav li:not(:last-child):after {
+    content: "|";
+    display: inline-block;
+    margin-left: 5px;
+}
+main {
+    margin: 0 auto;
+    max-width: 1200px;
+}
